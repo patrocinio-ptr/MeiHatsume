@@ -1,3 +1,7 @@
+from pathlib import Path
+import sys
+path_root = Path(__file__).parents[2]
+sys.path.append(str(path_root))
 import discord
 from typing import Union
 import os
@@ -12,7 +16,7 @@ from pytz import timezone
 from utility import guild_id, MY_GUILD, colors, is_owner, get_members, get_server, update_events, owner, get_mestres, brasil #type: ignore
 from mine import MineView, update_mine_button #type: ignore
 from baralho_de_aventura import Descartar #type: ignore
-from secrets.Secrets import TOKEN
+from my_secrets.Secrets import TOKEN
 
 
 intents = discord.Intents.all()
