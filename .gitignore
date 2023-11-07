@@ -1,1 +1,4 @@
 my_secrets
+__pycache__
+.vscode
+.tmp.driveupload
