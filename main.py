@@ -12,7 +12,7 @@ from pytz import timezone
 from utility import guild_id, MY_GUILD, colors, is_owner, get_members, get_server, update_events, owner, get_mestres, brasil #type: ignore
 from mine import MineView, update_mine_button #type: ignore
 from baralho_de_aventura import Descartar #type: ignore
-from Secrets import TOKEN
+from secrets.Secrets import TOKEN
 
 
 intents = discord.Intents.all()
