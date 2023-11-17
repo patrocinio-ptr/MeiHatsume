@@ -79,7 +79,6 @@ async def get_mestres(client):
         if discord.utils.get(member.roles, name="Mestres"): 
             mestres.append(member)
     return mestres
-        
 
 async def owner(user):
     if user.id == 286540943056830474:
@@ -87,6 +86,19 @@ async def owner(user):
     else:
         return False
     
+async def not_text_channel(channel):
+    if not isinstance(channel, discord.abc.Messageable):
+        return 1
+    else:
+        return 0
+    #use: if not_text_channel(channel): return
+    
+async def not_voice_channel(channel):
+    if not isinstance(channel, discord.VoiceChannel):
+        return 1
+    else:
+        return 0
+    #use: if not_voice_channel(channel) return
 
 async def track_event(event):
     start_time = int(event.start_time.replace(tzinfo=None).timestamp())

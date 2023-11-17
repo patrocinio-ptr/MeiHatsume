@@ -1,0 +1,16 @@
+youtube_dl
+discord.py
+https
+notion
+pytz
+asyncio
+aiohttp
+datetime
+PyNaCl
+
+
+pip install discord.py
+pip install pytz
+pip install discord.py PyNaCl
+pip install notion
+pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib

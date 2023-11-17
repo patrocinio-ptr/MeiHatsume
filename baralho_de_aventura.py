@@ -1,5 +1,6 @@
 import discord
 import random
+import math
 from discord import app_commands
 from discord.ext import commands
 from utility import guild_id, MY_GUILD, colors, update_events, get_members, get_server #type:ignore
@@ -185,7 +186,7 @@ class Baralho_de_aventura(commands.Cog):
                     return
                 await player.send(f"Sua carta de aventura para a {new_event.name} é:")
                 await self.deal_dm(interaction= None, user= player, cor=colors().blue)
-            for i in range(len(players)/2):
+            for i in range(math.floor(len(players)/2)):
                 await self.deal_mestre(None, 1)
         
 

@@ -3,25 +3,25 @@ import sys
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
 import discord
-from typing import Union
+from typing import Literal, Union
 import os
 import sys
 import random
-from discord import app_commands
+from discord import StageChannel, app_commands
 from discord.utils import get
 from discord.ext import commands
 import asyncio
 from datetime import datetime, timedelta
 from pytz import timezone
-from utility import guild_id, MY_GUILD, colors, is_owner, get_members, get_server, update_events, owner, get_mestres, brasil #type: ignore
-from mine import MineView, update_mine_button
-from baralho_de_aventura import Descartar 
-from my_secrets.Secrets import TOKEN
+from utility import guild_id, MY_GUILD, colors, is_owner, get_members, get_server, not_voice_channel, update_events, owner, get_mestres, brasil, not_voice_channel, not_text_channel #type: ignore
+from mine import MineView, update_mine_button #type: ignore
+from baralho_de_aventura import Descartar  #type: ignore
+from my_secrets.Secrets import TOKEN #type: ignore
 
 
 intents = discord.Intents.all()
 intents.members = True
-cog_files = ["misc", "mine", "baralho_de_aventura", "rolagens"]
+cog_files = ["misc", "mine", "baralho_de_aventura", "rolagens", "discord_notion"]
 
 whitelist = [1047320746453643344]
 
@@ -430,7 +430,7 @@ class Session(discord.ui.View): #Botões do /sessão
     horário = 'Horário da sessão. Ex.: 18:00',
     members_or_role = 'Players que jogarão a sessão, como menções. Ex.: @Pendragon(pode usar @cargo também)'
 )
-async def sessão(ctx: commands.Context, numero_da_sessão: str,tipo_de_sessão: str, nome:str, data : str,horário: str,data_in_game: str, members_or_role: commands.Greedy[Union[discord.Member, discord.Role]]):
+async def sessão(ctx: commands.Context, numero_da_sessão: str,tipo_de_sessão: Literal["🎮","👤","🎲", "🗺️", "🎥", "🩸", "📝"], nome:str, data : str,horário: str,data_in_game: str, members_or_role: commands.Greedy[Union[discord.Member, discord.Role]]):
     #Fazendo a lista com os member objects de cada um mencionado, sendo role ou pessoa em si
     members = []
     for member_or_role in members_or_role:
@@ -476,7 +476,11 @@ async def sessão(ctx: commands.Context, numero_da_sessão: str,tipo_de_sessão:
     if not embed.title:
         return
     sessão = embed.title
-    await guild.create_scheduled_event(name= sessão, start_time=data_object, channel=client.get_channel(1086301770545889320), description=(f"'||{nome}||' \nPlayers: {players}"))
+    stage_channel = await client.fetch_channel(1086301770545889320)
+    if not (isinstance(stage_channel, discord.VoiceChannel) or isinstance(stage_channel, discord.StageChannel)):
+        print("Channel not voice_channel")
+        return
+    await guild.create_scheduled_event(name= sessão, start_time=data_object, privacy_level = discord.PrivacyLevel(2), channel= stage_channel, description=(f"'||{nome}||' \nPlayers: {players}") )
 
     #Avisando o mestre
     mestres = await get_mestres(client)

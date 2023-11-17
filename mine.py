@@ -1,17 +1,11 @@
 from http import client
 from typing import Optional
 import discord
-import webbrowser
-import os
-import sys
-import random
 from discord import app_commands
 from discord.ext import commands
 import asyncio
 from datetime import datetime, timedelta
-import pytz
 from pytz import timezone
-import subprocess
 import aiohttp
 from utility import colors, brasil #type:ignore
 

@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from discord.ext import commands
+from discord.ext import commands, tasks
 import random
 from typing import Union
 import os
@@ -17,7 +17,8 @@ class Misc(commands.Cog):
         
     #Funções:--------------------------------------------------------------------------------
     #Funções:--------------------------------------------------------------------------------
-    #Funções:--------------------------------------------------------------------------------
+    #Funções:--------------------------------------------------------------------------------   
+    
     async def dm_purge_all_function(self):
         server = self.client.guilds[0]
         members = server.members
@@ -45,6 +46,7 @@ class Misc(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         await self.dm_purge_all_function()
+        self.voice_idle_check.start()
         return
     
     @commands.Cog.listener()
@@ -87,6 +89,18 @@ class Misc(commands.Cog):
     #Comandos: --------------------------------------------------
     #Comandos: --------------------------------------------------
     #Comandos: --------------------------------------------------
+    @tasks.loop(seconds= 18)
+    async def voice_idle_check(self):
+        guild = self.client.guilds[0]
+        voice_channels = guild.voice_channels
+        for channel in voice_channels:
+            bot_in_channel = any(member.id == self.client.user.id for member in channel.members)
+            if bot_in_channel:
+                print(f"Bot in channel: {channel.name}")
+                connected_members = channel.voice_states.keys()
+                if len(connected_members) == 1:
+                    await self.client.voice_clients[0].disconnect(force= True)
+                        
     '''/bibar''' #Biba o cara i vezes
     @app_commands.command() 
     @app_commands.check(is_owner)
@@ -99,10 +113,15 @@ class Misc(commands.Cog):
             print(f"Bibada em {user} número {i}")
             i -=1
         print("Bibada terminada")
+
+    @app_commands.command()
+    async def join(self, interaction, channel: discord.VoiceChannel):
+        await channel.connect()
         
         
     '''/editar'''
     @app_commands.command()
+    @app_commands.check(is_owner)
     async def editar(self, interaction: discord.Interaction, message_id: str, content: str = "",title: str = "", description:str = "" ):
         '''Edita o embed da mensagem cujo id condiza com o colocado, usando os parametros fornecidos para a edição'''
         message_id_int = int(message_id)
@@ -156,7 +175,9 @@ class Misc(commands.Cog):
         """Deleta todas as mensagens do bot de um canal de texto específico"""
         if not isinstance (channel, discord.abc.Messageable):
                 return # or send an error
-        await interaction.response.send_message("Purjando", delete_after=1)
+        await interaction.response.send_message("Holocausto será efetuado em 5 minutos, se isso foi um erro, você tem este tempo para parar o bot.", delete_after=1)
+        await asyncio.sleep(300)
+        await channel.send("Purjando", delete_after=1)
         await self.client.change_presence(activity=discord.Game(name="Deletando Mensagens"))
         async for message in channel.history(limit = None):
             await message.delete()  
@@ -200,7 +221,7 @@ class Misc(commands.Cog):
     async def dmpurgeall(self, interaction: discord.Interaction):
         """Deleta todas as mensagens do bot em todas as DMs"""
         await interaction.response.send_message("DMs sendo purjadas!", delete_after= 1)
-        await self.dm_purge_all_function(interaction= interaction)
+        await self.dm_purge_all_function()
         if not isinstance (interaction.channel, discord.abc.Messageable):
             return
         await interaction.channel.send("Todas as DMs foram purjadas!:D")
@@ -208,6 +229,7 @@ class Misc(commands.Cog):
 
     '''/delembed_dm [Conteúdo no titulo do embed]'''
     @app_commands.command()
+    @app_commands.check(is_owner)
     async def delembed_dm(self, interaction, title: str):
         '''Deleta as mensagens que contenham o título fornecido, na dm de todo mundo'''
         await interaction.response.send_message("Deletando mensagens...", delete_after = 1)
@@ -232,8 +254,11 @@ class Misc(commands.Cog):
     @app_commands.check(is_owner)
     async def dmholocausto(self, interaction: discord.Interaction):
         """Deleta todas as mensagens do bot em todas as DMs"""
+        if not isinstance(interaction.channel, discord.abc.Messageable):
+            print("Canal não mensageável")
+            return
         await interaction.channel.send("DM holocausto será efetuado em 5 minutos, se isso foi um erro, você tem este tempo para parar o bot.")
-        asyncio.sleep(300)
+        await asyncio.sleep(300)
         server = self.client.guilds[0]
         members = server.members
         await interaction.response.send_message("DMs sendo purjadas(mesmo)!", delete_after= 1)
@@ -264,10 +289,10 @@ class Misc(commands.Cog):
         os.execv(sys.executable, ['python'] + sys.argv)
         
         
-    '''/stop''' #Fecha o bot
+    '''/shutdown''' #Fecha o bot
     @app_commands.command()
     @app_commands.check(is_owner)
-    async def stop(self, interaction: discord.Interaction):
+    async def shutdown(self, interaction: discord.Interaction):
         """Desligar o bot"""
         await interaction.response.send_message("Desligando o bot...")
         await self.client.close()
@@ -291,9 +316,9 @@ class Misc(commands.Cog):
         for member in members:
             try:
                 await member.send(mensagem + "\n" + member.mention)
-                await ctx.channel.send(f"Mensagem enviada para: {member.mention}")
+                await ctx.send(f"Mensagem enviada para: {member.mention}")
             except:
-                await ctx.channel.send(f"Não foi possível enviar mensagem para: {member.mention}")
+                await ctx.send(f"Não foi possível enviar mensagem para: {member.mention}")
 
 
 
