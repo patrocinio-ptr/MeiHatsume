@@ -9,7 +9,7 @@ from discord.ext import commands, tasks
 from datetime import datetime, timedelta
 import asyncio
 from my_secrets.Secrets import NOTION_API_TOKEN, NOTION_TOKEN_V2 , OST_DATABASE_ID   #type: ignore
-
+from utility import music_channel_id #type: ignore
 
 
 headers = {
@@ -42,7 +42,7 @@ async def update_page(page_id,payload,headers):
     return response
 
 
-async def get_database_pages(DATABASE_ID):
+async def get_all_database_pages(DATABASE_ID):
     NOTION_DATABASE_URL = f"https://api.notion.com/v1/databases/{DATABASE_ID}"
     params = {}
     all_pages_data = []
@@ -89,23 +89,24 @@ class discord_notion(commands.Cog):
     
     @commands.Cog.listener()
     async def on_ready(self):
-        self.check_notion_database_for_ost.start()
+        #self.check_notion_database_for_ost.start()
+        pass
     
     @tasks.loop(seconds=5)
     async def check_notion_database_for_ost(self):
         #print("Loop\n")
-        
-        pages = await get_database_pages(OST_DATABASE_ID)
+        save_pages = []
+        pages = await get_all_database_pages(OST_DATABASE_ID)
         NOTION_DATABASE_URL = f"https://api.notion.com/v1/databases/{OST_DATABASE_ID}"
         for page in pages:
+            save_pages.append(page)
             properties = page.get('properties', {})
+            url = properties["Name"]["title"][0]["text"]["link"]["url"]
             page_id = page['id']
             # Check if the "Play" checkbox is checked
             if properties.get('Play', {}).get('checkbox', False):
                 print("Tocando OST no bot!")
-                
-                #tocar música no bot
-                #Tirar o play selecionado
+
                 global headers
                 properties = {
                     'Play': {'type': 'checkbox', 'checkbox': False},
@@ -117,10 +118,10 @@ class discord_notion(commands.Cog):
                 response = await update_page(page_id,payload,headers)
                 if response.status_code != 200:
                     print(response.content)
-                voice_channel =await  self.client.fetch_channel(1047320748529811500)
-                await voice_channel.connect()
-                music_channel = await self.client.fetch_channel(1053116705704001646)
-                await music_channel.send("/play https://www.youtube.com/watch?v=YoBe-OpHRmc")
+                music_channel = await self.client.fetch_channel(music_channel_id)
+                
+                await music_channel.send(f"??play {url}")
+        #salvar_json("Pages.txt", save_pages)
         
         
 

@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 import sys
 path_root = Path(__file__).parents[2]
 sys.path.append(str(path_root))
@@ -21,7 +22,7 @@ from my_secrets.Secrets import TOKEN #type: ignore
 
 intents = discord.Intents.all()
 intents.members = True
-cog_files = ["misc", "mine", "baralho_de_aventura", "rolagens", "discord_notion"]
+cog_files = ["misc", "mine", "baralho_de_aventura", "rolagens", "discord_notion", "music"]
 
 whitelist = [1047320746453643344]
 
@@ -36,6 +37,7 @@ class MyClient(commands.Bot):
         await self.tree.sync(guild=MY_GUILD)
 client = MyClient(intents=intents)
 
+Kokusen = []
 
 #Eventos:----------------------------------------------------------------------------------
 #Eventos:----------------------------------------------------------------------------------
@@ -55,20 +57,6 @@ async def on_ready():
     ptr = await client.fetch_user(286540943056830474)
     await channel.send(f"Bot on {ptr.mention}", delete_after=5)
     await update_events(client)
-    
-    #Checa se o bot ta no stage channel
-    stage_channel = await client.fetch_channel(1086301770545889320)
-    if not isinstance(stage_channel, discord.StageChannel):
-        print("Stage channel deu errrado")
-        return
-    connected_members = stage_channel.voice_states.keys()
-    flag = 0
-    while flag == 0:
-        await asyncio.sleep(1800)
-        if len(connected_members) > 1:
-            await client.voice_clients[0].disconnect(force= True)
-            flag = 1
-
 
 @client.event #whitelist bot
 async def on_guild_join(guild):
@@ -115,6 +103,77 @@ async def on_scheduled_event_create(event):
 async def on_scheduled_event_delete(event):
     await update_events(client)
 
+@client.event #Kokusen
+async def on_message(message):
+    offset = 6
+    i = 0
+    tuty = client.get_user(252150507345281024)
+    ptr = client.get_user(286540943056830474)
+    user = message.author
+    if not isinstance(tuty, discord.User) or not isinstance(ptr, discord.User):
+        return
+    try:
+        referenced_message = await message.channel.fetch_message(message.reference.message_id)
+        user = referenced_message.author
+        if user.id == 286540943056830474 or user.id == 252150507345281024:
+            if random.randint(1,2) == 1:
+                offset = 5
+                
+    except:
+        return
+            
+        
+
+    if message.channel.id == 1053116719859781632 and message.content.find("d") != -1 :
+            lines = message.content.split('\n')
+            
+            for line in lines:
+                line = line.strip()
+                if line:
+                    matches = re.findall(r'\d+d\d+', line)
+                        
+                    if len(matches) <= 3:   
+                        if user.id in Kokusen:
+                            if random.randint(1,6) >= offset:
+                                await tuty.send(f"{user.mention} KOKUUSENNNNNNNN!!! SEGUIDO")
+                                await ptr.send(f"{user.mention} KOKUUSENNNNNNNN!!! SEGUIDO")
+                                print("Kokusen Seguido")
+                                return
+                            else:
+                                print("Kokusen Streak cancelado")
+                                Kokusen.remove(user.id)
+                        while True:
+                            if user.id == 286540943056830474 or user.id == 252150507345281024:
+                                if random.randint(1,2) == 1:
+                                    offset = 5
+                                elif random.randint(1,3) == 1:
+                                    i += 1
+                                else:
+                                    offset = 6
+                            if random.randint(1,6) >= offset:
+                                i += 1
+                            else:
+                                break
+                            #await asyncio.sleep(0.01)
+                        #print("Quantidade de crits:", i)
+                        if i >=6:
+                            await tuty.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou {i} vezes")
+                            await ptr.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou {i} vezes")
+                            Kokusen.append(user.id)
+                            print("Kokusen")
+                            return
+                        else:
+                            if random.randint(1,500) == 77:
+                                i = 6
+                                await tuty.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou {i} vezes")
+                                await ptr.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou {i} vezes")
+                                Kokusen.append(user.id)
+                                print("Kokusen")
+                                return
+                        i=0
+                        if user.id == 286540943056830474 or user.id == 252150507345281024:
+                            if random.randint(1,6) == 1:
+                                i = 2                
 #Botões: -----------------------------------------------------------------------------------------
 #Botões: -----------------------------------------------------------------------------------------
 #Botões: -----------------------------------------------------------------------------------------
@@ -446,13 +505,14 @@ async def sessão(ctx: commands.Context, numero_da_sessão: str,tipo_de_sessão:
     n_players = len(members)
     
     #Data
+    this_year = str(datetime.now().year)
     aux = data.split("/")
-    data_new = aux[1] + "/" + aux[0] +"/2023 "+horário+":00" #data
+    data_new = aux[1] + "/" + aux[0] +"/"+this_year + " " + horário+":00" #data
     data_object = brasil.localize(datetime.utcnow().strptime(data_new, '%m/%d/%Y %H:%M:%S'))
     discord_timestamp_horas = discord.utils.format_dt(data_object, style="t")
     discord_timestamp_data = discord.utils.format_dt(data_object, style="d")
     #criando o embed
-    embed = discord.Embed(title=f"Sessão {numero_da_sessão}({tipo_de_sessão})", description=f'"||{nome}||\n Data in-game:{data_in_game}"', color = colors().teal)
+    embed = discord.Embed(title=f"Sessão {numero_da_sessão}({tipo_de_sessão})", description=f'"||{nome}||"\n Data in-game:{data_in_game}', color = colors().teal)
     embed.add_field(name="Data:",value=discord_timestamp_data, inline=False)
     embed.add_field(name="Horário:",value=discord_timestamp_horas, inline=False)
     embed.add_field(name="Players: ",value=players, inline=False)
@@ -798,6 +858,20 @@ async def teste(interaction):
                 await client.voice_clients[0].disconnect(force= True)
                 flag = 1
     
+    
+    
+    
+@client.tree.command()
+@app_commands.check(is_owner)
+async def koku(interaction: discord.Interaction, user: discord.Member):
+    tuty = client.get_user(252150507345281024)
+    ptr = client.get_user(286540943056830474)
+    if not isinstance(tuty, discord.User) or not isinstance(ptr, discord.User):
+        return
+    await tuty.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou 6 vezes")
+    await ptr.send(f"{user.mention} KOKUUSENNNNNNNN!!! Critou 6 vezes")
+    
+        
     
     
 client.run(TOKEN)

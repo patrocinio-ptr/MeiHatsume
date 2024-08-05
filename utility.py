@@ -10,9 +10,10 @@ from datetime import datetime
 from pytz import timezone
 
 
-TOKEN = "MTA3ODcyNDM4NDkyMDk2NTEzMA.GZXmUj.0e1YU_6MmTUVpQ0EiQutiOH966rnnU048LIq0E"
+
 MY_GUILD = discord.Object(id=1047320746453643344)
 guild_id = 1047320746453643344
+music_channel_id = 1053116705704001646
 class colors:
   default = 0
   teal = 0x1abc9c

@@ -7,7 +7,20 @@ asyncio
 aiohttp
 datetime
 PyNaCl
+FFMPEG (https://www.youtube.com/watch?app=desktop&v=5xgegeBL0kw)
+1.go to https://ffmpeg.org/ 
+2.Download latest full build or stable build
+3.Extract ffmpeg zip file
+4.Move the extracted files into C drive
+5.Copy bin path
+6.Add it to environment variables
+7.check ffmpeg is working or not
+8.thank you
+git clone --depth 1 --branch fix-function-sig-parser https://github.com/lanegramling/youtube-dl.git
 
+cd youtube-dl
+
+python3 -m pip install -e . --user
 
 pip install discord.py
 pip install pytz

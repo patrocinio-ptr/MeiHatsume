@@ -1,9 +1,9 @@
 import discord
 import random
 import math
-from discord import app_commands
+from discord import Interaction, app_commands
 from discord.ext import commands
-from utility import guild_id, MY_GUILD, colors, update_events, get_members, get_server #type:ignore
+from utility import guild_id, MY_GUILD, colors, update_events, get_members, get_server, is_owner #type:ignore
 from typing import Union
 
 deck = [
@@ -287,12 +287,6 @@ class Baralho_de_aventura(commands.Cog):
                 
                 await channel.send("Mestre recebeu a carta!")
 
-    async def is_owner(self, interaction : discord.Interaction):#Retorna True se o interaction.user for dono do server
-        if interaction.user.id == 286540943056830474:
-            return True
-        else:
-            return False
-
     async def find_card(self, interaction : discord.Interaction, nome : str):
         '''Pesquisa no baralho as cartas que contenham os termos pesquisados.'''
         whole_deck = deck + dealt_cards
@@ -307,10 +301,10 @@ class Baralho_de_aventura(commands.Cog):
     #Comandos: ---------------------------------------------------------------------
     #Comandos: ---------------------------------------------------------------------
     
-    
     '''/deal [player]''' #Manda uma carta na DM do Player
     @app_commands.command()
     @app_commands.rename(user='player')
+    @app_commands.check(is_owner)
     @app_commands.describe( #options 
         user='Player para receber a carta na DM'
     )

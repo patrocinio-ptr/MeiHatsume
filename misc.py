@@ -7,6 +7,7 @@ import os
 import sys
 from utility import is_owner, get_members, get_server, owner, is_mestre #type: ignore
 import asyncio
+from random import shuffle
 
 #Classe:--------------------------------------------------------------------------------
 #Classe:--------------------------------------------------------------------------------
@@ -96,7 +97,6 @@ class Misc(commands.Cog):
         for channel in voice_channels:
             bot_in_channel = any(member.id == self.client.user.id for member in channel.members)
             if bot_in_channel:
-                print(f"Bot in channel: {channel.name}")
                 connected_members = channel.voice_states.keys()
                 if len(connected_members) == 1:
                     await self.client.voice_clients[0].disconnect(force= True)
@@ -319,6 +319,25 @@ class Misc(commands.Cog):
                 await ctx.send(f"Mensagem enviada para: {member.mention}")
             except:
                 await ctx.send(f"Não foi possível enviar mensagem para: {member.mention}")
+    
+    @commands.hybrid_command()
+    async def iniciativa(self, ctx,args):
+        players = [arg.split(':') for arg in args.split(';')]
+        results = []
+        for player in players:
+            name, draw, discard = player[0], int(player[1]), int(player[2])
+            deck = [i for i in range(1, 14)] * 4  # Um baralho padrão de 52 cartas
+            shuffle(deck)
+            hand = sorted(deck[:draw], reverse=True)
+            hand = [card for card in hand if card >= discard]
+            results.append((name, hand))
+
+        results.sort(key=lambda x: x[1][0] if x[1] else 0, reverse=True)
+
+        for result in results:
+            await ctx.send(f'{result[0]}: {", ".join(map(str, result[1]))}')
+
+
 
 
 

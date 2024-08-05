@@ -1,0 +1,72 @@
+[
+    {
+        "object": "page",
+        "id": "a4d7deea-b1a1-4b68-86f3-1cfd8f9821cd",
+        "created_time": "2023-11-10T00:07:00.000Z",
+        "last_edited_time": "2023-11-17T00:49:00.000Z",
+        "created_by": {
+            "object": "user",
+            "id": "5130219e-63fc-4d4a-a3ea-53e1f41ad1fc"
+        },
+        "last_edited_by": {
+            "object": "user",
+            "id": "57229311-ec4b-4df7-a56e-da8c6968ae01"
+        },
+        "cover": {
+            "type": "external",
+            "external": {
+                "url": "https://images.unsplash.com/photo-1606663889439-d732b9e58816?ixlib=rb-4.0.3&q=85&fm=jpg&crop=entropy&cs=srgb"
+            }
+        },
+        "icon": null,
+        "parent": {
+            "type": "database_id",
+            "database_id": "cc6d1623-666e-4e84-be4f-fcb95ccf4770"
+        },
+        "archived": false,
+        "properties": {
+            "Categorias": {
+                "id": "iQ%3At",
+                "type": "multi_select",
+                "multi_select": []
+            },
+            "Play": {
+                "id": "j%7D%5Em",
+                "type": "checkbox",
+                "checkbox": false
+            },
+            "URL": {
+                "id": "pi%3CS",
+                "type": "url",
+                "url": null
+            },
+            "Name": {
+                "id": "title",
+                "type": "title",
+                "title": [
+                    {
+                        "type": "text",
+                        "text": {
+                            "content": "https://www.youtube.com",
+                            "link": {
+                                "url": "https://www.youtube.com/"
+                            }
+                        },
+                        "annotations": {
+                            "bold": false,
+                            "italic": false,
+                            "strikethrough": false,
+                            "underline": false,
+                            "code": false,
+                            "color": "default"
+                        },
+                        "plain_text": "https://www.youtube.com",
+                        "href": "https://www.youtube.com/"
+                    }
+                ]
+            }
+        },
+        "url": "https://www.notion.so/https-www-youtube-com-a4d7deeab1a14b6886f31cfd8f9821cd",
+        "public_url": null
+    }
+]
